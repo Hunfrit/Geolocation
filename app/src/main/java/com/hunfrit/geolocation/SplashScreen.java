@@ -56,6 +56,7 @@ public class SplashScreen extends Activity {
 
         @Override
         public void onLocationChanged(Location location) {
+            Toast.makeText(getApplicationContext(), "Location changed", Toast.LENGTH_SHORT).show();
             if (location.getProvider().equals(LocationManager.NETWORK_PROVIDER)){
                 Intent intent = new Intent(SplashScreen.this, MainActivity.class);
                 intent.putExtra("lit", String.format("%1$.4f", location.getLatitude()));
