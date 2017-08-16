@@ -1,5 +1,7 @@
 package com.hunfrit.geolocation;
 
+import android.location.Address;
+import android.location.Geocoder;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
@@ -9,6 +11,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -42,8 +48,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String second = (String) getIntent().getSerializableExtra("lon");
 
         // Add a marker in Kropyvnytskyi and move the camera
+
+        Geocoder geocoder;
+
+        geocoder = new Geocoder(this, Locale.getDefault());
+        String currentAddress = "";
+        try {
+            List<Address> addresses = geocoder.getFromLocation(Double.valueOf(first), Double.valueOf(second), 1);
+            if(addresses != null){
+                currentAddress = addresses.get(0).getAddressLine(0);
+            }else{
+                currentAddress = "No Address returned!";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         LatLng kropyvnytskyi = new LatLng(Double.valueOf(first), Double.valueOf(second));
-        mMap.addMarker(new MarkerOptions().position(kropyvnytskyi).title("Marker in Kropyvnytskyi"));
+        mMap.addMarker(new MarkerOptions().position(kropyvnytskyi).title(currentAddress));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(kropyvnytskyi));
     }
 }
