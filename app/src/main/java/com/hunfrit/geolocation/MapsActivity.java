@@ -1,9 +1,11 @@
 package com.hunfrit.geolocation;
 
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -16,8 +18,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import static android.content.SharedPreferences.*;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    SharedPreferences sPref;
     private GoogleMap mMap;
 
     @Override
@@ -62,10 +67,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         } catch (IOException e) {
             e.printStackTrace();
+            currentAddress = "Cannot get Address!";
         }
 
-        LatLng kropyvnytskyi = new LatLng(Double.valueOf(first), Double.valueOf(second));
-        mMap.addMarker(new MarkerOptions().position(kropyvnytskyi).title(currentAddress));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(kropyvnytskyi));
+        LatLng place = new LatLng(Double.valueOf(first), Double.valueOf(second));
+        mMap.addMarker(new MarkerOptions().position(place).title(currentAddress));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(place));
     }
 }

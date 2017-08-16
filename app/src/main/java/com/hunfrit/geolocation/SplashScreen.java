@@ -56,13 +56,13 @@ public class SplashScreen extends Activity {
 
         @Override
         public void onLocationChanged(Location location) {
-            Intent intent = new Intent(SplashScreen.this, MapsActivity.class);
             if (location.getProvider().equals(LocationManager.NETWORK_PROVIDER)){
+                Intent intent = new Intent(SplashScreen.this, MainActivity.class);
                 intent.putExtra("lit", String.format("%1$.4f", location.getLatitude()));
                 intent.putExtra("lon", String.format("%1$.4f", location.getLongitude()));
+                startActivity(intent);
+                finish();
             }
-            startActivity(intent);
-            finish();
         }
 
         @Override
@@ -71,6 +71,7 @@ public class SplashScreen extends Activity {
         }
 
         @Override
+
         public void onProviderEnabled(String provider) {
             if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
