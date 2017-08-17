@@ -1,11 +1,9 @@
 package com.hunfrit.geolocation;
 
-import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -18,11 +16,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import static android.content.SharedPreferences.*;
-
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    SharedPreferences sPref;
     private GoogleMap mMap;
 
     @Override
@@ -57,7 +52,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Geocoder geocoder;
 
         geocoder = new Geocoder(this, Locale.getDefault());
-        String currentAddress = "";
+        String currentAddress;
         try {
             List<Address> addresses = geocoder.getFromLocation(Double.valueOf(first), Double.valueOf(second), 1);
             if(addresses != null){
