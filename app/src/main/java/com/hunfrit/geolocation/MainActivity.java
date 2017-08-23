@@ -122,10 +122,17 @@ public class MainActivity extends AppCompatActivity {
                         locationB.setLongitude(Double.parseDouble(LON));
                     }
                     float distance = locationA.distanceTo(locationB);
+                    float currentDistance = 0;
+                    if (sharedPreferences == null){
+                        currentDistance = distance;
+                    } else if (sharedPreferences != null){
+                        currentDistance = distance + sPref.getFloat("PreviousDistance", 0);
+                    }
                     sPref = getPreferences(MODE_PRIVATE);
                     SharedPreferences.Editor editor = sPref.edit();
-                    editor.putFloat("PreviousDistance", distance);
-                    float currentDistance = distance + sPref.getFloat("PreviousDistance", 0);
+                    editor.putFloat("PreviousDistance", currentDistance);
+                    editor.commit();
+
                     if (currentDistance >= 1000){
                         currentDistance /= 1000;
                         distanceTV.setText(String.valueOf(String.format("%1$.2f", currentDistance)) + " km");
@@ -141,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
                 previousEditor.putString("PreviousLIT", LIT);
                 previousEditor.putString("PreviousLON", LON);
                 previousEditor.commit();
-
             }
         }
 
