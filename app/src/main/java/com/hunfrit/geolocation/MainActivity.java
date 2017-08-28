@@ -21,10 +21,9 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    SharedPreferences sPref, sharedPreferences;
-    TextView startPoint, currentLocation, distanceTV;
-    String LIT, LON;
-    LocationManager locationManager;
+    private SharedPreferences mSPref, mSharedPreferences;
+    private TextView mStartPoint, mCurrentLocation, mDistanceTV;
+    private String LIT, LON;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,13 +31,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-        startPoint = (TextView) findViewById(R.id.startPoint);
-        currentLocation = (TextView) findViewById(R.id.currentLocation);
-        distanceTV = (TextView) findViewById(R.id.distance);
+        mStartPoint = (TextView) findViewById(R.id.startPoint);
+        mCurrentLocation = (TextView) findViewById(R.id.currentLocation);
+        mDistanceTV = (TextView) findViewById(R.id.distance);
 
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -53,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000 * 10, 10, locationListener);
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000 * 10, 10, locationListener);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -70,22 +69,23 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void startTracking (View view){
+    public void startTracking(View view) {
+        clearSP();
         String first = LIT;
         String second = LON;
-        sPref = getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor ed = sPref.edit();
+        mSPref = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor ed = mSPref.edit();
         ed.putString("LIT", first);
         ed.putString("LON", second);
         ed.commit();
-        startPoint.setText(first + ", " + second);
+        mStartPoint.setText(first + ", " + second);
     }
 
-    public void LOAD(View view){
-        sPref = getPreferences(MODE_PRIVATE);
-        String firstSaved = sPref.getString("LIT", "");
-        String secondSaved = sPref.getString("LON", "");
-        startPoint.setText(firstSaved + ", " + secondSaved);
+    public void LOAD(View view) {
+        mSPref = getPreferences(MODE_PRIVATE);
+        String firstSaved = mSPref.getString("LIT", "");
+        String secondSaved = mSPref.getString("LON", "");
+        mStartPoint.setText(firstSaved + ", " + secondSaved);
     }
 
     private LocationListener locationListener = new LocationListener() {
@@ -94,60 +94,39 @@ public class MainActivity extends AppCompatActivity {
         public void onLocationChanged(final Location location) {
             Toast.makeText(getApplicationContext(), "Location changed", Toast.LENGTH_SHORT).show();
 
-            if (location.getProvider().equals(LocationManager.NETWORK_PROVIDER)){
+            if (location.getProvider().equals(LocationManager.NETWORK_PROVIDER)) {
                 LIT = String.format("%1$.4f", location.getLatitude());
                 LON = String.format("%1$.4f", location.getLongitude());
-                currentLocation.setText(LIT + ", " + LON);
+                mCurrentLocation.setText(LIT + ", " + LON);
 
-                if (sPref != null){
+                if (mSPref != null) {
+                    mSPref = getPreferences(MODE_PRIVATE);
+                    String firstSaved = mSPref.getString("LIT", "");
+                    String secondSaved = mSPref.getString("LON", "");
+                    mStartPoint.setText(firstSaved + ", " + secondSaved);
 
-                    sPref = getPreferences(MODE_PRIVATE);
-                    String firstSaved = sPref.getString("LIT", "");
-                    String secondSaved = sPref.getString("LON", "");
-                    startPoint.setText(firstSaved + ", " + secondSaved);
-                    Location locationA = new Location("point A");
-                    Location locationB = new Location("point B");
-
-                    if (sharedPreferences == null){
-                        locationA.setLatitude(Double.parseDouble(sPref.getString("LIT", "")));
-                        locationA.setLongitude(Double.parseDouble(sPref.getString("LON", "")));
-
-                        locationB.setLatitude(Double.parseDouble(LIT));
-                        locationB.setLongitude(Double.parseDouble(LON));
-                    } else if (sharedPreferences != null){
-                        locationA.setLatitude(Double.parseDouble(sharedPreferences.getString("PreviousLIT", "")));
-                        locationA.setLongitude(Double.parseDouble(sharedPreferences.getString("PreviousLON", "")));
-
-                        locationB.setLatitude(Double.parseDouble(LIT));
-                        locationB.setLongitude(Double.parseDouble(LON));
-                    }
-                    float distance = locationA.distanceTo(locationB);
+                    float distance = setDistance();
                     float currentDistance = 0;
-                    if (sharedPreferences == null){
+                    if (mSharedPreferences == null) {
                         currentDistance = distance;
-                    } else if (sharedPreferences != null){
-                        currentDistance = distance + sPref.getFloat("PreviousDistance", 0);
+                    } else if (mSharedPreferences != null) {
+                        currentDistance = distance + mSPref.getFloat("PreviousDistance", 0);
                     }
-                    sPref = getPreferences(MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sPref.edit();
+                    mSPref = getPreferences(MODE_PRIVATE);
+                    SharedPreferences.Editor editor = mSPref.edit();
                     editor.putFloat("PreviousDistance", currentDistance);
                     editor.commit();
 
-                    if (currentDistance >= 1000){
+                    if (currentDistance >= 1000) {
                         currentDistance /= 1000;
-                        distanceTV.setText(String.valueOf(String.format("%1$.2f", currentDistance)) + " km");
-                    } else{
-                        distanceTV.setText(String.valueOf(String.format("%1$.1f", currentDistance)) + " m");
+                        mDistanceTV.setText(String.valueOf(String.format("%1$.2f", currentDistance)) + " km");
+                    } else {
+                        mDistanceTV.setText(String.valueOf(String.format("%1$.1f", currentDistance)) + " m");
                     }
-                } else if (sPref == null){
-                    distanceTV.setText("0.0 m");
+                } else if (mSPref == null) {
+                    mDistanceTV.setText("0.0 m");
                 }
-
-                sharedPreferences = getPreferences(MODE_PRIVATE);
-                SharedPreferences.Editor previousEditor = sharedPreferences.edit();
-                previousEditor.putString("PreviousLIT", LIT);
-                previousEditor.putString("PreviousLON", LON);
-                previousEditor.commit();
+                setPreviousCoordination();
             }
         }
 
@@ -177,4 +156,40 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    private float setDistance (){
+        Location locationA = new Location("point A");
+        Location locationB = new Location("point B");
+
+        if (mSharedPreferences == null) {
+            locationA.setLatitude(Double.parseDouble(mSPref.getString("LIT", "")));
+            locationA.setLongitude(Double.parseDouble(mSPref.getString("LON", "")));
+
+            locationB.setLatitude(Double.parseDouble(LIT));
+            locationB.setLongitude(Double.parseDouble(LON));
+        } else if (mSharedPreferences != null) {
+            locationA.setLatitude(Double.parseDouble(mSharedPreferences.getString("PreviousLIT", "")));
+            locationA.setLongitude(Double.parseDouble(mSharedPreferences.getString("PreviousLON", "")));
+
+            locationB.setLatitude(Double.parseDouble(LIT));
+            locationB.setLongitude(Double.parseDouble(LON));
+        }
+        float distance = locationA.distanceTo(locationB);
+        return distance;
+    }
+
+    private void setPreviousCoordination (){
+        mSharedPreferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor previousEditor = mSharedPreferences.edit();
+        previousEditor.putString("PreviousLIT", LIT);
+        previousEditor.putString("PreviousLON", LON);
+        previousEditor.commit();
+    }
+
+    private void clearSP(){
+        mSPref = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = mSPref.edit();
+        editor.remove("PreviousDistance");
+        editor.commit();
+    }
 }
