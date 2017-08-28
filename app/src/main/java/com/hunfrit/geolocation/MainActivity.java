@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -18,6 +20,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -47,8 +53,6 @@ public class MainActivity extends AppCompatActivity {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            Log.d("TAGA", "WTF");
-
             return;
         }
 
@@ -81,11 +85,11 @@ public class MainActivity extends AppCompatActivity {
         mStartPoint.setText(first + ", " + second);
     }
 
-    public void LOAD(View view) {
-        mSPref = getPreferences(MODE_PRIVATE);
-        String firstSaved = mSPref.getString("LIT", "");
-        String secondSaved = mSPref.getString("LON", "");
-        mStartPoint.setText(firstSaved + ", " + secondSaved);
+    public void stopTracking(View view){
+        clearSP();
+        mSPref = null;
+        mDistanceTV.setText("0.0 m");
+        mStartPoint.setText("For get start point - u should to start tracking");
     }
 
     private LocationListener locationListener = new LocationListener() {
@@ -97,7 +101,11 @@ public class MainActivity extends AppCompatActivity {
             if (location.getProvider().equals(LocationManager.NETWORK_PROVIDER)) {
                 LIT = String.format("%1$.4f", location.getLatitude());
                 LON = String.format("%1$.4f", location.getLongitude());
-                mCurrentLocation.setText(LIT + ", " + LON);
+                if (getAddress(LIT, LON).equals("No Address returned!")){
+                    mCurrentLocation.setText(LIT + ", " + LON);
+                }else {
+                    mCurrentLocation.setText(getAddress(LIT, LON));
+                }
 
                 if (mSPref != null) {
                     mSPref = getPreferences(MODE_PRIVATE);
@@ -190,6 +198,25 @@ public class MainActivity extends AppCompatActivity {
         mSPref = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor editor = mSPref.edit();
         editor.remove("PreviousDistance");
+        editor.remove("LIT");
+        editor.remove("LON");
         editor.commit();
     }
+
+    private String getAddress(String lit, String lon){
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        String currentAddress;
+        try {
+            List<Address> addresses = geocoder.getFromLocation(Double.valueOf(lit), Double.valueOf(lon), 1);
+            if(addresses != null){
+                return currentAddress = addresses.get(0).getAddressLine(0);
+            }else{
+                return currentAddress = "No Address returned!";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return currentAddress = "Cannot get Address!";
+        }
+    }
+
 }
