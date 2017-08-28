@@ -17,4 +17,5 @@ public interface MainView {
 
     void serviceOnStatusChanged(boolean check);
 
+
 }

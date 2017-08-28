@@ -24,34 +24,6 @@ public class Service implements LocationListener {
         this.view = view;
     }
 
-//
-//    public LocationListener locationListener = new LocationListener() {
-//
-//        @Override
-//        public void onLocationChanged(final Location location) {
-//            callLocationChanged(location);
-//        }
-//
-//        @Override
-//        public void onProviderDisabled(String provider) {
-//            view.serviceOnProviderDisabled(true);
-//        }
-//
-//        @Override
-//
-//        public void onProviderEnabled(String provider) {
-//            view.serviceOnProviderEnabled(true);
-//        }
-//
-//        @Override
-//        public void onStatusChanged(String provider, int status, Bundle extras) {
-//            view.serviceOnStatusChanged(true);
-//        }
-//    };
-//
-//    public void callLocationChanged(Location location){
-//        view.serviceOnLocationChanged(location, true);
-//    }
 
     @Override
     public void onLocationChanged(Location location) {

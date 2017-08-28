@@ -16,7 +16,6 @@ import com.hunfrit.geolocation.R;
 
 public class SplashScreen extends Activity {
 
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
