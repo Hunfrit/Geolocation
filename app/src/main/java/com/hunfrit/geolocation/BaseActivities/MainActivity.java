@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
         ed.commit();
 
         setLastTracking();
-
         clearSP();
         mSPref = null;
         mDistanceTV.setText("0.0 m");
