@@ -1,4 +1,4 @@
-package com.hunfrit.geolocation;
+package com.hunfrit.geolocation.BaseActivities;
 
 import android.location.Address;
 import android.location.Geocoder;
@@ -11,6 +11,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.hunfrit.geolocation.R;
 
 import java.io.IOException;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.hunfrit.geolocation;
+package com.hunfrit.geolocation.BaseActivities.SplashScreen;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,6 +6,8 @@ import android.os.Bundle;
 
 import android.support.annotation.Nullable;
 
+import com.hunfrit.geolocation.BaseActivities.MainActivity;
+import com.hunfrit.geolocation.R;
 
 
 /**
