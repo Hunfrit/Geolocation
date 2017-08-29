@@ -4,8 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.icu.text.SimpleDateFormat;
-import android.icu.util.Calendar;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -27,7 +25,6 @@ import com.hunfrit.geolocation.Service.Service;
 import com.hunfrit.geolocation.View.MainView;
 
 import java.io.IOException;
-import java.sql.Time;
 import java.util.List;
 import java.util.Locale;
 
@@ -93,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
         mStartPoint.setText(first + ", " + second);
     }
 
-    public void stopTracking(View view){
+    public void stopTracking(View view) {
 //        Calendar calendar = Calendar.getInstance();
 //        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
 //        String formatedDate = simpleDateFormat.format(calendar.getTime());
@@ -101,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
 //        SharedPreferences.Editor ed = mSPref.edit();
 //        ed.putString("LastTrackingDate", formatedDate);
 //        ed.commit();
-
+//
 //        setLastTracking();
         clearSP();
         mSPref = null;
@@ -109,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
         mStartPoint.setText("For get start point - u should to start tracking");
     }
 
-    private float setDistance (){
+    private float setDistance() {
         Location locationA = new Location("point A");
         Location locationB = new Location("point B");
 
@@ -130,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
         return distance;
     }
 
-    private void setPreviousCoordination (){
+    private void setPreviousCoordination() {
         mSharedPreferences = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor previousEditor = mSharedPreferences.edit();
         previousEditor.putString("PreviousLIT", LIT);
@@ -138,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
         previousEditor.commit();
     }
 
-    private void clearSP(){
+    private void clearSP() {
         mSPref = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor editor = mSPref.edit();
         editor.remove("PreviousDistance");
@@ -147,14 +144,14 @@ public class MainActivity extends AppCompatActivity implements MainView {
         editor.commit();
     }
 
-    private String getAddress(String lit, String lon){
+    private String getAddress(String lit, String lon) {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         String currentAddress;
         try {
             List<Address> addresses = geocoder.getFromLocation(Double.valueOf(lit), Double.valueOf(lon), 1);
-            if(addresses != null){
+            if (addresses != null) {
                 return currentAddress = addresses.get(0).getAddressLine(0);
-            }else{
+            } else {
                 return currentAddress = "No Address returned!";
             }
         } catch (IOException e) {
@@ -163,22 +160,22 @@ public class MainActivity extends AppCompatActivity implements MainView {
         }
     }
 
-    public void setLastTracking(){
+    public void setLastTracking() {
         mSPref = getPreferences(MODE_PRIVATE);
         mDistanceTV.setText(mSPref.getString("PreviousDistance", "") + " " + mSPref.getString("LastTrackingDate", ""));
     }
 
     @Override
     public void serviceOnLocationChanged(Location location, boolean check) {
-        if(check){
+        if (check) {
             Toast.makeText(getApplicationContext(), "Location changed", Toast.LENGTH_SHORT).show();
 
             if (location.getProvider().equals(LocationManager.NETWORK_PROVIDER)) {
                 LIT = String.format("%1$.4f", location.getLatitude());
                 LON = String.format("%1$.4f", location.getLongitude());
-                if (getAddress(LIT, LON).equals("No Address returned!")){
+                if (getAddress(LIT, LON).equals("No Address returned!")) {
                     mCurrentLocation.setText(LIT + ", " + LON);
-                }else {
+                } else {
                     mCurrentLocation.setText(getAddress(LIT, LON));
                 }
 
@@ -216,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
     @Override
     public void serviceOnProviderDisabled(boolean check) {
-        if(check){
+        if (check) {
             Toast.makeText(getApplicationContext(), "Please, turn on location", Toast.LENGTH_LONG).show();
         }
     }
