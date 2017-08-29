@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.icu.text.SimpleDateFormat;
+import android.icu.util.Calendar;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -26,6 +27,7 @@ import com.hunfrit.geolocation.Service.Service;
 import com.hunfrit.geolocation.View.MainView;
 
 import java.io.IOException;
+import java.sql.Time;
 import java.util.List;
 import java.util.Locale;
 
@@ -92,15 +94,15 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
     public void stopTracking(View view){
-        long date = System.currentTimeMillis();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM MM dd, yyyy h:mm a");
-        String dateString = simpleDateFormat.format(date);
-        mSPref = getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor ed = mSPref.edit();
-        ed.putString("LastTrackingDate", dateString);
-        ed.commit();
+//        Calendar calendar = Calendar.getInstance();
+//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+//        String formatedDate = simpleDateFormat.format(calendar.getTime());
+//        mSPref = getPreferences(MODE_PRIVATE);
+//        SharedPreferences.Editor ed = mSPref.edit();
+//        ed.putString("LastTrackingDate", formatedDate);
+//        ed.commit();
 
-        setLastTracking();
+//        setLastTracking();
         clearSP();
         mSPref = null;
         mDistanceTV.setText("0.0 m");
